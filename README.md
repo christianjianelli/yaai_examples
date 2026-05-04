@@ -1,5 +1,4 @@
-# yaai_examples
-ABAP AI tools - Usage Examples
+# ABAP AI tools - Usage Examples
 
 This repository contains examples that demonstrate the basic usage of the ABAP AI tools with multiple providers, including Anthropic, Google, OpenAI, Ollama, Mistral, and Nvidia.
 
