@@ -1,0 +1,61 @@
+*&---------------------------------------------------------------------*
+*& Report yaai_ui_r_quickstart_chat
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT yaai_ui_r_quickstart_chat.
+
+PARAMETERS: p_model TYPE c LENGTH 30 LOWER CASE OBLIGATORY DEFAULT 'gpt-5.4'.
+
+CLASS lcl_app DEFINITION.
+
+  PUBLIC SECTION.
+
+    DATA mo_aai_ui_chat TYPE REF TO ycl_aai_ui_chat_v2 READ-ONLY.
+
+    METHODS run.
+
+ENDCLASS.
+
+CLASS lcl_app IMPLEMENTATION.
+
+  METHOD run.
+
+    IF me->mo_aai_ui_chat IS BOUND.
+      "Avoid multiple instantiation
+      RETURN.
+    ENDIF.
+
+    " Run the class YCL_AAI_BASIC_SETUP to execute the basic setup of the APIs, models and tools
+    DATA(lo_aai_conn) = NEW ycl_aai_conn( yif_aai_const=>c_openai ).
+
+    " The hardcoded API key in this example is intended for testing and development only.
+    " Hardcoding API keys directly into your ABAP code is highly discouraged.
+    lo_aai_conn->set_api_key( i_api_key = 'REPLACE_THIS_TEXT_WITH_YOUR_API_KEY' ).
+
+    DATA(lo_aai_openai) = NEW ycl_aai_openai( i_model = p_model
+                                              i_o_connection = lo_aai_conn ).
+
+    "Create a Chat instance passing the AI API you want to use
+    me->mo_aai_ui_chat = NEW #( io_api = lo_aai_openai
+                                i_greeting = 'How can I help you today? 😊' ).
+
+    "Display the Chat User Interface
+    me->mo_aai_ui_chat->run( ).
+
+  ENDMETHOD.
+
+ENDCLASS.
+
+DATA o_app TYPE REF TO lcl_app.
+
+INITIALIZATION.
+
+  "Set text for the selection screen fields
+  %_p_model_%_app_%-text = 'Model'.
+
+  o_app = NEW lcl_app( ).
+
+AT SELECTION-SCREEN OUTPUT.
+
+  o_app->run( ).
